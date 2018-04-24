@@ -20,7 +20,7 @@ using Org.SbeTool.Sbe.Dll;
 namespace Org.SbeTool.Sbe.Tests
 {
     [TestClass]
-    public unsafe class DirectBufferTests
+    public sealed unsafe class DirectBufferTests
     {
         private byte[] _buffer;
         private DirectBuffer _directBuffer;
@@ -29,7 +29,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestInitialize]
         public void SetUp()
         {
-            _buffer = new Byte[16];
+            _buffer = new byte[16];
             _directBuffer = new DirectBuffer(_buffer);
             var handle = GCHandle.Alloc(_buffer, GCHandleType.Pinned);
 
@@ -51,7 +51,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         public void ConstructFromNativeBuffer()
         {
-            var managedBuffer = new Byte[16];
+            var managedBuffer = new byte[16];
             var handle = GCHandle.Alloc(managedBuffer, GCHandleType.Pinned);
             var unmanagedBuffer = (byte*) handle.AddrOfPinnedObject().ToPointer();
 
@@ -69,7 +69,7 @@ namespace Org.SbeTool.Sbe.Tests
         public void Recycle()
         {
             var directBuffer = new DirectBuffer();
-            var firstBuffer = new Byte[16];
+            var firstBuffer = new byte[16];
             directBuffer.Wrap(firstBuffer);
 
             directBuffer.Int64PutLittleEndian(0, 1);
@@ -89,7 +89,7 @@ namespace Org.SbeTool.Sbe.Tests
         public void Reallocate()
         {
             const int initialBufferSize = 8;
-            var initialBuffer = new Byte[initialBufferSize];
+            var initialBuffer = new byte[initialBufferSize];
             
             const int biggerBufferSize = 100;
             var biggerBuffer = new byte[biggerBufferSize];
@@ -118,7 +118,7 @@ namespace Org.SbeTool.Sbe.Tests
         public void ReallocateFailure()
         {
             const int initialBufferSize = 8;
-            var initialBuffer = new Byte[initialBufferSize];
+            var initialBuffer = new byte[initialBufferSize];
             var reallocableBuffer = new DirectBuffer(initialBuffer, (existingSize, requestedSize) =>
             {
                 Assert.AreEqual(initialBufferSize, existingSize);
@@ -201,7 +201,7 @@ namespace Org.SbeTool.Sbe.Tests
         {
             _directBuffer.Int16PutBigEndian(index, value);
 
-            var expected = EndianessConverter.ApplyInt16(ByteOrder.BigEndian, value);
+            short expected = EndianessConverter.ApplyInt16(ByteOrder.BigEndian, value);
             Assert.AreEqual(expected, *(short*) (_pBuffer + index));
         }
 
@@ -213,7 +213,7 @@ namespace Org.SbeTool.Sbe.Tests
             var bytes = BitConverter.GetBytes(value);
             Array.Copy(bytes, 0, _buffer, index, 2);
 
-            var result = _directBuffer.Int16GetLittleEndian(index);
+            short result = _directBuffer.Int16GetLittleEndian(index);
 
             Assert.AreEqual(value, result);
         }
@@ -226,9 +226,9 @@ namespace Org.SbeTool.Sbe.Tests
             var bytes = BitConverter.GetBytes(value);
             Array.Copy(bytes, 0, _buffer, index, 2);
 
-            var result = _directBuffer.Int16GetBigEndian(index);
+            short result = _directBuffer.Int16GetBigEndian(index);
 
-            var expected = EndianessConverter.ApplyInt16(ByteOrder.BigEndian, value);
+            short expected = EndianessConverter.ApplyInt16(ByteOrder.BigEndian, value);
             Assert.AreEqual(expected, result);
         }
 
@@ -253,7 +253,7 @@ namespace Org.SbeTool.Sbe.Tests
         {
             _directBuffer.Int32PutBigEndian(index, value);
 
-            var expected = EndianessConverter.ApplyInt32(ByteOrder.BigEndian, value);
+            int expected = EndianessConverter.ApplyInt32(ByteOrder.BigEndian, value);
             Assert.AreEqual(expected, *(int*)(_pBuffer + index));
         }
 
@@ -265,7 +265,7 @@ namespace Org.SbeTool.Sbe.Tests
             var bytes = BitConverter.GetBytes(value);
             Array.Copy(bytes, 0, _buffer, index, 4);
 
-            var result = _directBuffer.Int32GetLittleEndian(index);
+            int result = _directBuffer.Int32GetLittleEndian(index);
 
             Assert.AreEqual(value, result);
         }
@@ -278,9 +278,9 @@ namespace Org.SbeTool.Sbe.Tests
             var bytes = BitConverter.GetBytes(value);
             Array.Copy(bytes, 0, _buffer, index, 4);
 
-            var result = _directBuffer.Int32GetBigEndian(index);
+            int result = _directBuffer.Int32GetBigEndian(index);
 
-            var expected = EndianessConverter.ApplyInt32(ByteOrder.BigEndian, value);
+            int expected = EndianessConverter.ApplyInt32(ByteOrder.BigEndian, value);
             Assert.AreEqual(expected, result);
         }
 
@@ -291,7 +291,7 @@ namespace Org.SbeTool.Sbe.Tests
         [DataRow(5, 0)]
         [DataRow(5, 8)]
         [DataRow(-5, 8)]
-        public void ShouldPutInt64LittleEndian(int value, int index)
+        public void ShouldPutInt64LittleEndian(long value, int index)
         {
             _directBuffer.Int64PutLittleEndian(index, value);
 
@@ -305,7 +305,7 @@ namespace Org.SbeTool.Sbe.Tests
         {
             _directBuffer.Int64PutBigEndian(index, value);
 
-            var expected = EndianessConverter.ApplyInt64(ByteOrder.BigEndian, value);
+            long expected = EndianessConverter.ApplyInt64(ByteOrder.BigEndian, value);
             Assert.AreEqual(expected, *(long*)(_pBuffer + index));
         }
 
@@ -317,7 +317,7 @@ namespace Org.SbeTool.Sbe.Tests
             var bytes = BitConverter.GetBytes(value);
             Array.Copy(bytes, 0, _buffer, index, 8);
 
-            var result = _directBuffer.Int64GetLittleEndian(index);
+            long result = _directBuffer.Int64GetLittleEndian(index);
 
             Assert.AreEqual(value, result);
         }
@@ -330,8 +330,8 @@ namespace Org.SbeTool.Sbe.Tests
             var bytes = BitConverter.GetBytes(value);
             Array.Copy(bytes, 0, _buffer, index, 8);
 
-            var result = _directBuffer.Int64GetBigEndian(index);
-            var expected = EndianessConverter.ApplyInt64(ByteOrder.BigEndian, value);
+            long result = _directBuffer.Int64GetBigEndian(index);
+            long expected = EndianessConverter.ApplyInt64(ByteOrder.BigEndian, value);
             Assert.AreEqual(expected, result);
         }
 
@@ -349,12 +349,14 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [DataRow(5, 0)]
-        [DataRow(5, 8)]
+        [DataRow(5, 7)]
+        [DataRow(Byte.MinValue, 8)]
+        [DataRow(Byte.MaxValue, 9)]
         public void ShouldGetUInt8(byte value, int index)
         {
             _buffer[index] = *&value;
 
-            var result = _directBuffer.Uint8Get(index);
+            byte result = _directBuffer.Uint8Get(index);
 
             Assert.AreEqual(value, result);
         }
@@ -363,51 +365,55 @@ namespace Org.SbeTool.Sbe.Tests
 
         #region UInt16
 
-        [TestMethod]
-        public void ShouldPutUInt16LittleEndian()
+        [DataRow(5, 0)]
+        [DataRow(5, 7)]
+        [DataRow(UInt16.MinValue, 8)]
+        [DataRow(UInt16.MaxValue, 9)]
+        public void ShouldPutUInt16LittleEndian(ushort value, int index)
         {
-            const ushort value = 5;
-            const int index = 0;
             _directBuffer.Uint16PutLittleEndian(index, value);
 
             Assert.AreEqual(value, *(ushort*)(_pBuffer + index));
         }
 
-        [TestMethod]
-        public void ShouldPutUInt16BigEndian()
+        [DataRow(5, 0)]
+        [DataRow(5, 7)]
+        [DataRow(UInt16.MinValue, 8)]
+        [DataRow(UInt16.MaxValue, 9)]
+        public void ShouldPutUInt16BigEndian(ushort value, int index)
         {
-            const ushort value = 5;
-            const int index = 0;
             _directBuffer.Uint16PutBigEndian(index, value);
 
-            var expected = EndianessConverter.ApplyUint16(ByteOrder.BigEndian, value);
+            ushort expected = EndianessConverter.ApplyUint16(ByteOrder.BigEndian, value);
             Assert.AreEqual(expected, *(ushort*)(_pBuffer + index));
         }
 
-        [TestMethod]
-        public void ShouldGetUInt16LittleEndian()
+        [DataRow(5, 0)]
+        [DataRow(5, 7)]
+        [DataRow(UInt16.MinValue, 8)]
+        [DataRow(UInt16.MaxValue, 9)]
+        public void ShouldGetUInt16LittleEndian(ushort value, int index)
         {
-            const ushort value = 5;
-            const int index = 0;
             var bytes = BitConverter.GetBytes(value);
             Array.Copy(bytes, 0, _buffer, index, 2);
 
-            var result = _directBuffer.Uint16GetLittleEndian(index);
+            ushort result = _directBuffer.Uint16GetLittleEndian(index);
 
             Assert.AreEqual(value, result);
         }
 
-       [TestMethod]
-        public void ShouldGetUInt16BigEndian()
+        [DataRow(5, 0)]
+        [DataRow(5, 7)]
+        [DataRow(UInt16.MinValue, 8)]
+        [DataRow(UInt16.MaxValue, 9)]
+        public void ShouldGetUInt16BigEndian(ushort value, int index)
         {
-            const ushort value = 5;
-            const int index = 0;
             var bytes = BitConverter.GetBytes(value);
             Array.Copy(bytes, 0, _buffer, index, 2);
 
-            var result = _directBuffer.Uint16GetBigEndian(index);
+            ushort result = _directBuffer.Uint16GetBigEndian(index);
 
-            var expected = EndianessConverter.ApplyUint16(ByteOrder.BigEndian, value);
+            ushort expected = EndianessConverter.ApplyUint16(ByteOrder.BigEndian, value);
             Assert.AreEqual(expected, result);
         }
 
@@ -415,210 +421,238 @@ namespace Org.SbeTool.Sbe.Tests
 
         #region UInt32
 
-       [TestMethod]
-       public void ShouldPutUInt32LittleEndian()
-       {
-           const uint value = 5;
-           const int index = 0;
-           _directBuffer.Uint32PutLittleEndian(index, value);
+        [DataRow(0, 0)]
+        [DataRow(5, 7)]
+        [DataRow(UInt32.MinValue, 8)]
+        [DataRow(UInt32.MaxValue, 9)]
+        public void ShouldPutUInt32LittleEndian(uint value, int index)
+        {
+            _directBuffer.Uint32PutLittleEndian(index, value);
 
-           Assert.AreEqual(value, *(uint*)(_pBuffer + index));
-       }
+            Assert.AreEqual(value, *(uint*) (_pBuffer + index));
+        }
 
-       [TestMethod]
-       public void ShouldPutUInt32BigEndian()
-       {
-           const uint value = 5;
-           const int index = 0;
-           _directBuffer.Uint32PutBigEndian(index, value);
+        [DataRow(0, 0)]
+        [DataRow(5, 7)]
+        [DataRow(UInt32.MinValue, 8)]
+        [DataRow(UInt32.MaxValue, 9)]
+        public void ShouldPutUInt32BigEndian(uint value, int index)
+        {
+            _directBuffer.Uint32PutBigEndian(index, value);
 
-           var expected = EndianessConverter.ApplyUint32(ByteOrder.BigEndian, value);
-           Assert.AreEqual(expected, *(uint*)(_pBuffer + index));
-       }
+            uint expected = EndianessConverter.ApplyUint32(ByteOrder.BigEndian, value);
+            Assert.AreEqual(expected, *(uint*) (_pBuffer + index));
+        }
 
-       [TestMethod]
-       public void ShouldGetUInt32LittleEndian()
-       {
-           const uint value = 5;
-           const int index = 0;
-           var bytes = BitConverter.GetBytes(value);
-           Array.Copy(bytes, 0, _buffer, index, 4);
+        [DataRow(0, 0)]
+        [DataRow(5, 7)]
+        [DataRow(UInt32.MinValue, 8)]
+        [DataRow(UInt32.MaxValue, 9)]
+        public void ShouldGetUInt32LittleEndian(uint value, int index)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Array.Copy(bytes, 0, _buffer, index, 4);
 
-           var result = _directBuffer.Uint32GetLittleEndian(index);
+            uint result = _directBuffer.Uint32GetLittleEndian(index);
 
-           Assert.AreEqual(value, result);
-       }
+            Assert.AreEqual(value, result);
+        }
 
-       [TestMethod]
-       public void ShouldGetUInt32BigEndian()
-       {
-           const uint value = 5;
-           const int index = 0;
-           var bytes = BitConverter.GetBytes(value);
-           Array.Copy(bytes, 0, _buffer, index, 4);
+        [DataRow(0, 0)]
+        [DataRow(5, 7)]
+        [DataRow(UInt32.MinValue, 8)]
+        [DataRow(UInt32.MaxValue, 9)]
+        public void ShouldGetUInt32BigEndian(uint value, int index)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Array.Copy(bytes, 0, _buffer, index, 4);
 
-           var result = _directBuffer.Uint32GetBigEndian(index);
+            uint result = _directBuffer.Uint32GetBigEndian(index);
 
-           var expected = EndianessConverter.ApplyUint32(ByteOrder.BigEndian, value);
-           Assert.AreEqual(expected, result);
-       }
+            uint expected = EndianessConverter.ApplyUint32(ByteOrder.BigEndian, value);
+            Assert.AreEqual(expected, result);
+        }
 
-       #endregion
+        #endregion
 
         #region UInt64
 
-       [TestMethod]
-       public void ShouldPutUInt64LittleEndian()
-       {
-           const ulong value = ulong.MaxValue - 1;
-           const int index = 0;
-           _directBuffer.Uint64PutLittleEndian(index, value);
+        [TestMethod]
+        [DataRow((ulong)0, 0)]
+        [DataRow((ulong)5, 1)]
+        [DataRow(UInt64.MinValue, 8)]
+        [DataRow(UInt64.MaxValue, 9)]
+        public void ShouldPutUInt64LittleEndian(ulong value, int index)
+        {
+            _directBuffer.Uint64PutLittleEndian(index, value);
 
-           Assert.AreEqual(value, *(ulong*)(_pBuffer + index));
-       }
+            Assert.AreEqual(value, *(ulong*) (_pBuffer + index));
+        }
 
-       [TestMethod]
-       public void ShouldPutUInt64BigEndian()
-       {
-           const ulong value = ulong.MaxValue - 1;
-           const int index = 0;
-           _directBuffer.Uint64PutBigEndian(index, value);
+        [TestMethod]
+        [DataRow((ulong)0, 0)]
+        [DataRow((ulong)5, 1)]
+        [DataRow(UInt64.MinValue, 8)]
+        [DataRow(UInt64.MaxValue, 9)]
+        public void ShouldPutUInt64BigEndian(ulong value, int index)
+        {
+            _directBuffer.Uint64PutBigEndian(index, value);
 
-           var expected = EndianessConverter.ApplyUint64(ByteOrder.BigEndian, value);
-           Assert.AreEqual(expected, *(ulong*)(_pBuffer + index));
-       }
+            ulong expected = EndianessConverter.ApplyUint64(ByteOrder.BigEndian, value);
+            Assert.AreEqual(expected, *(ulong*) (_pBuffer + index));
+        }
 
-       [TestMethod]
-       public void ShouldGetUInt64LittleEndian()
-       {
-           const ulong value = ulong.MaxValue - 1;
-           const int index = 0;
-           var bytes = BitConverter.GetBytes(value);
-           Array.Copy(bytes, 0, _buffer, index, 8);
+        [TestMethod]
+        [DataRow((ulong)0, 0)]
+        [DataRow((ulong)5, 1)]
+        [DataRow(UInt64.MinValue, 2)]
+        [DataRow(UInt64.MaxValue, 3)]
+        public void ShouldGetUInt64LittleEndian(ulong value, int index)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Array.Copy(bytes, 0, _buffer, index, 8);
 
-           var result = _directBuffer.Uint64GetLittleEndian(index);
+            ulong result = _directBuffer.Uint64GetLittleEndian(index);
 
-           Assert.AreEqual(value, result);
-       }
+            Assert.AreEqual(value, result);
+        }
 
-       [TestMethod]
-       public void ShouldGetUInt64BigEndian()
-       {
-           const ulong value = ulong.MaxValue - 1;
-           const int index = 0;
-           var bytes = BitConverter.GetBytes(value);
-           Array.Copy(bytes, 0, _buffer, index, 8);
+        [TestMethod]
+        [DataRow((ulong)0, 0)]
+        [DataRow((ulong)5, 1)]
+        [DataRow(UInt64.MinValue, 2)]
+        [DataRow(UInt64.MaxValue, 3)]
+        public void ShouldGetUInt64BigEndian(ulong value, int index)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Array.Copy(bytes, 0, _buffer, index, 8);
 
-           var result = _directBuffer.Uint64GetBigEndian(index);
+            ulong result = _directBuffer.Uint64GetBigEndian(index);
 
-           var expected = EndianessConverter.ApplyUint64(ByteOrder.BigEndian, value);
-           Assert.AreEqual(expected, result);
-       }
+            ulong expected = EndianessConverter.ApplyUint64(ByteOrder.BigEndian, value);
+            Assert.AreEqual(expected, result);
+        }
 
-       #endregion
+        #endregion
 
         #region Float
 
-       [TestMethod]
-       public void ShouldPutFloatLittleEndian()
-       {
-           const float value = float.MaxValue - 1;
-           const int index = 0;
-           _directBuffer.FloatPutLittleEndian(index, value);
+        [TestMethod]
+        [DataRow(0, 0)]
+        [DataRow(5, 1)]
+        [DataRow(float.MinValue, 2)]
+        [DataRow(float.MaxValue, 3)]
+        public void ShouldPutFloatLittleEndian(float value, int index)
+        {
+            _directBuffer.FloatPutLittleEndian(index, value);
 
-           Assert.AreEqual(value, *(float*)(_pBuffer + index));
-       }
+            Assert.AreEqual(value, *(float*) (_pBuffer + index));
+        }
 
-       [TestMethod]
-       public void ShouldPutFloatBigEndian()
-       {
-           const float value = float.MaxValue - 1;
-           const int index = 0;
-           _directBuffer.FloatPutBigEndian(index, value);
+        [TestMethod]
+        [DataRow(0, 0)]
+        [DataRow(5, 1)]
+        [DataRow(float.MinValue, 2)]
+        [DataRow(float.MaxValue, 3)]
+        public void ShouldPutFloatBigEndian(float value, int index)
+        {
+            _directBuffer.FloatPutBigEndian(index, value);
 
-           var expected = EndianessConverter.ApplyFloat(ByteOrder.BigEndian, value);
-           Assert.AreEqual(expected, *(float*)(_pBuffer + index));
-       }
+            float expected = EndianessConverter.ApplyFloat(ByteOrder.BigEndian, value);
+            Assert.AreEqual(expected, *(float*) (_pBuffer + index));
+        }
 
-       [TestMethod]
-       public void ShouldGetFloatLittleEndian()
-       {
-           const float value = float.MaxValue - 1;
-           const int index = 0;
-           var bytes = BitConverter.GetBytes(value);
-           Array.Copy(bytes, 0, _buffer, index, 4);
+        [TestMethod]
+        [DataRow(0, 0)]
+        [DataRow(5, 1)]
+        [DataRow(float.MinValue, 2)]
+        [DataRow(float.MaxValue, 3)]
+        public void ShouldGetFloatLittleEndian(float value, int index)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Array.Copy(bytes, 0, _buffer, index, 4);
 
-           var result = _directBuffer.FloatGetLittleEndian(index);
+            float result = _directBuffer.FloatGetLittleEndian(index);
 
-           Assert.AreEqual(value, result);
-       }
+            Assert.AreEqual(value, result);
+        }
 
-       [TestMethod]
-       public void ShouldGetFloatBigEndian()
-       {
-           const float value = float.MaxValue - 1;
-           const int index = 0;
-           var bytes = BitConverter.GetBytes(value);
-           Array.Copy(bytes, 0, _buffer, index, 4);
+        [TestMethod]
+        [DataRow(0, 0)]
+        [DataRow(5, 1)]
+        [DataRow(float.MinValue, 2)]
+        [DataRow(float.MaxValue, 3)]
+        public void ShouldGetFloatBigEndian(float value, int index)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Array.Copy(bytes, 0, _buffer, index, 4);
 
-           var result = _directBuffer.FloatGetBigEndian(index);
+            float result = _directBuffer.FloatGetBigEndian(index);
 
-           var expected = EndianessConverter.ApplyFloat(ByteOrder.BigEndian, value);
-           Assert.AreEqual(expected, result);
-       }
+            float expected = EndianessConverter.ApplyFloat(ByteOrder.BigEndian, value);
+            Assert.AreEqual(expected, result);
+        }
 
-       #endregion
+        #endregion
 
         #region Double
 
-       [TestMethod]
-       public void ShouldPutDoubleLittleEndian()
-       {
-           const double value = double.MaxValue - 1;
-           const int index = 0;
-           _directBuffer.DoublePutLittleEndian(index, value);
+        [TestMethod]
+        [DataRow(0, 0)]
+        [DataRow(5, 1)]
+        [DataRow(double.MinValue, 2)]
+        [DataRow(double.MaxValue, 3)]
+        public void ShouldPutDoubleLittleEndian(double value, int index)
+        {
+            _directBuffer.DoublePutLittleEndian(index, value);
 
-           Assert.AreEqual(value, *(double*)(_pBuffer + index));
-       }
+            Assert.AreEqual(value, *(double*) (_pBuffer + index));
+        }
 
-       [TestMethod]
-       public void ShouldPutDoubleBigEndian()
-       {
-           const double value = double.MaxValue - 1;
-           const int index = 0;
-           _directBuffer.DoublePutBigEndian(index, value);
+        [TestMethod]
+        [DataRow(0, 0)]
+        [DataRow(5, 1)]
+        [DataRow(double.MinValue, 2)]
+        [DataRow(double.MaxValue, 3)]
+        public void ShouldPutDoubleBigEndian(double value, int index)
+        {
+            _directBuffer.DoublePutBigEndian(index, value);
 
-           var expected = EndianessConverter.ApplyDouble(ByteOrder.BigEndian, value);
-           Assert.AreEqual(expected, *(double*)(_pBuffer + index));
-       }
+            double expected = EndianessConverter.ApplyDouble(ByteOrder.BigEndian, value);
+            Assert.AreEqual(expected, *(double*) (_pBuffer + index));
+        }
 
-       [TestMethod]
-       public void ShouldGetDoubleLittleEndian()
-       {
-           const double value = double.MaxValue - 1;
-           const int index = 0;
+        [TestMethod]
+        [DataRow(0, 0)]
+        [DataRow(5, 1)]
+        [DataRow(double.MinValue, 2)]
+        [DataRow(double.MaxValue, 3)]
+       public void ShouldGetDoubleLittleEndian(double value, int index)
+        {
            var bytes = BitConverter.GetBytes(value);
            Array.Copy(bytes, 0, _buffer, index, 8);
 
-           var result = _directBuffer.DoubleGetLittleEndian(index);
+           double result = _directBuffer.DoubleGetLittleEndian(index);
 
            Assert.AreEqual(value, result);
        }
 
-       [TestMethod]
-       public void ShouldGetDoubleBigEndian()
-       {
-           const double value = double.MaxValue - 1;
-           const int index = 0;
-           var bytes = BitConverter.GetBytes(value);
-           Array.Copy(bytes, 0, _buffer, index, 8);
+        [TestMethod]
+        [DataRow(0, 0)]
+        [DataRow(5, 1)]
+        [DataRow(double.MinValue, 2)]
+        [DataRow(double.MaxValue, 3)]
+        public void ShouldGetDoubleBigEndian(double value, int index)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Array.Copy(bytes, 0, _buffer, index, 8);
 
-           var result = _directBuffer.DoubleGetBigEndian(index);
+            double result = _directBuffer.DoubleGetBigEndian(index);
 
-           var expected = EndianessConverter.ApplyDouble(ByteOrder.BigEndian, value);
-           Assert.AreEqual(expected, result);
-       }
+            double expected = EndianessConverter.ApplyDouble(ByteOrder.BigEndian, value);
+            Assert.AreEqual(expected, result);
+        }
 
-       #endregion
+        #endregion
     }
 }

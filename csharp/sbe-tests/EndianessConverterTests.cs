@@ -20,7 +20,7 @@ using Org.SbeTool.Sbe.Dll;
 namespace Org.SbeTool.Sbe.Tests
 {
     [TestClass]
-    public class EndianessConverterTests
+    public sealed class EndianessConverterTests
     {
         [TestMethod]
         public void ApplyShortWithLittleEndianShouldNoOp()

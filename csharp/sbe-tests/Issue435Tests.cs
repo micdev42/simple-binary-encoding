@@ -19,7 +19,7 @@ using Org.SbeTool.Sbe.Dll;
 namespace Org.SbeTool.Sbe.Tests
 {
     [TestClass]
-    public unsafe class Issue435Tests
+    public sealed class Issue435Tests
     {
         private byte[] _buffer;
         private DirectBuffer _directBuffer;

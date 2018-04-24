@@ -12,24 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Org.SbeTool.Sbe.Dll;
 
 namespace Org.SbeTool.Sbe.Tests
 {
     [TestClass]
-    public unsafe class Issue483Tests
+    public sealed class Issue483Tests
     {
-        private Issue483.Issue483 _issue483;
-
-        [TestInitialize]
-        public void SetUp()
-        {
-            _issue483 = new Issue483.Issue483();
- 
-        }
-
         [TestMethod]
         public void PresenceTest()
         {
@@ -39,6 +28,5 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(Issue483.Issue483.ConstantMetaAttribute(Issue483.MetaAttribute.Presence), "constant");
             Assert.AreEqual(Issue483.Issue483.OptionalMetaAttribute(Issue483.MetaAttribute.Presence), "optional");
         }
-
     }
 }
