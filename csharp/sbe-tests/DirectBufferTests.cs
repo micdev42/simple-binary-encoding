@@ -70,7 +70,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(long.MaxValue)]
         [DataRow(long.MinValue)]
-        [DataRow(0, 3)]
+        [DataRow(0)]
         public void Recycle(long value)
         {
             var directBuffer = new DirectBuffer();
@@ -93,7 +93,7 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        public void Reallocate(long value)
+        public void Reallocate()
         {
             const int initialBufferSize = 8;
             var initialBuffer = new byte[initialBufferSize];
@@ -114,7 +114,7 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(initialBufferSize, reallocableBuffer.Capacity);
 
             reallocableBuffer.CheckLimit(16);
-            reallocableBuffer.Int64PutLittleEndian(1, 2);
+            reallocableBuffer.Int64PutLittleEndian(8, 2);
             Assert.AreEqual(biggerBufferSize, reallocableBuffer.Capacity);
 
             Assert.AreEqual(1, BitConverter.ToInt64(biggerBuffer, 0));
@@ -144,7 +144,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(byte.MaxValue, 1)]
         [DataRow(byte.MinValue, 2)]
-        [DataRow(0, 3)]
+        [DataRow((byte)0, 3)]
         public void ShouldPutByte(byte value, int index)
         {
             _directBuffer.CharPut(index, value);
@@ -155,7 +155,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(byte.MaxValue, 1)]
         [DataRow(byte.MinValue, 2)]
-        [DataRow(0, 3)]
+        [DataRow((byte)0, 3)]
         public void ShouldGetByte(byte value, int index)
         {
             _buffer[index] = value;
@@ -172,7 +172,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(sbyte.MaxValue, 1)]
         [DataRow(sbyte.MinValue, 2)]
-        [DataRow(0, 3)]
+        [DataRow((sbyte)0, 3)]
         public void ShouldPutInt8(sbyte value, int index)
         {
             _directBuffer.Int8Put(index, value);
@@ -183,7 +183,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(sbyte.MaxValue, 1)]
         [DataRow(sbyte.MinValue, 2)]
-        [DataRow(0, 3)]
+        [DataRow((sbyte)0, 3)]
         public void ShouldGetInt8(sbyte value, int index)
         {
             _buffer[index] = *(byte*) &value;
@@ -200,7 +200,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(short.MaxValue, 1)]
         [DataRow(short.MinValue, 2)]
-        [DataRow(0, 3)]
+        [DataRow((short)0, 3)]
         public void ShouldPutInt16LittleEndian(short value, int index)
         {
             _directBuffer.Int16PutLittleEndian(index, value);
@@ -211,7 +211,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(short.MaxValue, 1)]
         [DataRow(short.MinValue, 2)]
-        [DataRow(0, 3)]
+        [DataRow((short)0, 3)]
         public void ShouldPutInt16BigEndian(short value, int index)
         {
             _directBuffer.Int16PutBigEndian(index, value);
@@ -223,7 +223,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(short.MaxValue, 1)]
         [DataRow(short.MinValue, 2)]
-        [DataRow(0, 3)]
+        [DataRow((short)0, 3)]
         public void ShouldGetInt16LittleEndian(short value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -237,7 +237,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(short.MaxValue, 1)]
         [DataRow(short.MinValue, 2)]
-        [DataRow(0, 3)]
+        [DataRow((short)0, 3)]
         public void ShouldGetInt16BigEndian(short value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -367,7 +367,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(byte.MaxValue, 1)]
         [DataRow(byte.MinValue, 2)]
-        [DataRow(0, 3)]
+        [DataRow((byte)0, 3)]
         public void ShouldPutUInt8(byte value, int index)
         {
             _directBuffer.Uint8Put(index, value);
@@ -378,7 +378,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(byte.MaxValue, 1)]
         [DataRow(byte.MinValue, 2)]
-        [DataRow(0, 3)]
+        [DataRow((byte)0, 3)]
         public void ShouldGetUInt8(byte value, int index)
         {
             _buffer[index] = *&value;

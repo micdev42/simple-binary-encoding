@@ -25,7 +25,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(short.MinValue)]
         [DataRow(short.MaxValue)]
-        [DataRow(0)]
+        [DataRow((short)0)]
         public void ApplyShortWithLittleEndianShouldNoOp(short input)
         {
             var result = EndianessConverter.ApplyInt16(ByteOrder.LittleEndian, input);
@@ -36,7 +36,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(short.MinValue)]
         [DataRow(short.MaxValue)]
-        [DataRow(0)]
+        [DataRow((short)0)]
         public void ApplyShortWithBigEndianShouldReverseBytes(short input)
         {
             var result = EndianessConverter.ApplyInt16(ByteOrder.BigEndian, input);
@@ -48,7 +48,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(ushort.MinValue)]
         [DataRow(ushort.MaxValue)]
-        [DataRow(0)]
+        [DataRow((ushort)0)]
         public void ApplyUShortWithLittleEndianShouldNoOp(ushort input)
         {
             var result = EndianessConverter.ApplyUint16(ByteOrder.LittleEndian, input);
@@ -59,7 +59,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(ushort.MinValue)]
         [DataRow(ushort.MaxValue)]
-        [DataRow(0)]
+        [DataRow((ushort)0)]
         public void ApplyUShortWithBigEndianShouldReverseBytes(ushort input)
         {
             var result = EndianessConverter.ApplyUint16(ByteOrder.BigEndian, input);
@@ -82,7 +82,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(int.MinValue)]
         [DataRow(int.MaxValue)]
-        [DataRow(0)]
+        [DataRow((int)0)]
         public void ApplyIntWithBigEndianShouldReverseBytes(int input)
         {
             var result = EndianessConverter.ApplyInt32(ByteOrder.BigEndian, input);
@@ -94,7 +94,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(uint.MinValue)]
         [DataRow(uint.MaxValue)]
-        [DataRow(0)]
+        [DataRow((uint)0)]
         public void ApplyUIntWithLittleEndianShouldNoOp(uint input)
         {
             var result = EndianessConverter.ApplyUint32(ByteOrder.LittleEndian, input);
@@ -105,7 +105,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(uint.MinValue)]
         [DataRow(uint.MaxValue)]
-        [DataRow(0)]
+        [DataRow((uint)0)]
         public void ApplyUIntWithBigEndianShouldReverseBytes(uint input)
         {
             var result = EndianessConverter.ApplyUint32(ByteOrder.BigEndian, input);
@@ -117,7 +117,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(ulong.MinValue)]
         [DataRow(ulong.MaxValue)]
-        [DataRow(0)]
+        [DataRow((ulong)0)]
         public void ApplyULongWithLittleEndianShouldNoOp(ulong input)
         {
             var result = EndianessConverter.ApplyUint64(ByteOrder.LittleEndian, input);
@@ -128,7 +128,7 @@ namespace Org.SbeTool.Sbe.Tests
         [TestMethod]
         [DataRow(ulong.MinValue)]
         [DataRow(ulong.MaxValue)]
-        [DataRow(0)]
+        [DataRow((ulong)0)]
         public void ApplyULongWithBigEndianShouldReverseBytes(ulong input)
         {
             var result = EndianessConverter.ApplyUint64(ByteOrder.BigEndian, input);
