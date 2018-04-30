@@ -23,20 +23,22 @@ namespace Org.SbeTool.Sbe.Tests
     public sealed class EndianessConverterTests
     {
         [TestMethod]
-        public void ApplyShortWithLittleEndianShouldNoOp()
+        [DataRow(short.MinValue)]
+        [DataRow(short.MaxValue)]
+        [DataRow(0)]
+        public void ApplyShortWithLittleEndianShouldNoOp(short input)
         {
-            const short input = 12;
-
             var result = EndianessConverter.ApplyInt16(ByteOrder.LittleEndian, input);
 
             Assert.AreEqual(input, result);
         }
 
         [TestMethod]
-        public void ApplyShortWithBigEndianShouldReverseBytes()
+        [DataRow(short.MinValue)]
+        [DataRow(short.MaxValue)]
+        [DataRow(0)]
+        public void ApplyShortWithBigEndianShouldReverseBytes(short input)
         {
-            const short input = 12;
-
             var result = EndianessConverter.ApplyInt16(ByteOrder.BigEndian, input);
 
             short expected = BitConverter.ToInt16(BitConverter.GetBytes(input).Reverse().ToArray(), 0);
@@ -44,20 +46,22 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        public void ApplyUShortWithLittleEndianShouldNoOp()
+        [DataRow(ushort.MinValue)]
+        [DataRow(ushort.MaxValue)]
+        [DataRow(0)]
+        public void ApplyUShortWithLittleEndianShouldNoOp(ushort input)
         {
-            const ushort input = 12;
-
             var result = EndianessConverter.ApplyUint16(ByteOrder.LittleEndian, input);
 
             Assert.AreEqual(input, result);
         }
 
         [TestMethod]
-        public void ApplyUShortWithBigEndianShouldReverseBytes()
+        [DataRow(ushort.MinValue)]
+        [DataRow(ushort.MaxValue)]
+        [DataRow(0)]
+        public void ApplyUShortWithBigEndianShouldReverseBytes(ushort input)
         {
-            const ushort input = 12;
-
             var result = EndianessConverter.ApplyUint16(ByteOrder.BigEndian, input);
 
             ushort expected = BitConverter.ToUInt16(BitConverter.GetBytes(input).Reverse().ToArray(), 0);
@@ -65,20 +69,22 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        public void ApplyIntWithLittleEndianShouldNoOp()
+        [DataRow(int.MinValue)]
+        [DataRow(int.MaxValue)]
+        [DataRow(0)]
+        public void ApplyIntWithLittleEndianShouldNoOp(int input)
         {
-            const int input = 12;
-
             var result = EndianessConverter.ApplyInt32(ByteOrder.LittleEndian, input);
 
             Assert.AreEqual(input, result);
         }
 
         [TestMethod]
-        public void ApplyIntWithBigEndianShouldReverseBytes()
+        [DataRow(int.MinValue)]
+        [DataRow(int.MaxValue)]
+        [DataRow(0)]
+        public void ApplyIntWithBigEndianShouldReverseBytes(int input)
         {
-            const int input = 12;
-
             var result = EndianessConverter.ApplyInt32(ByteOrder.BigEndian, input);
 
             int expected = BitConverter.ToInt32(BitConverter.GetBytes(input).Reverse().ToArray(), 0);
@@ -86,20 +92,22 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        public void ApplyUIntWithLittleEndianShouldNoOp()
+        [DataRow(uint.MinValue)]
+        [DataRow(uint.MaxValue)]
+        [DataRow(0)]
+        public void ApplyUIntWithLittleEndianShouldNoOp(uint input)
         {
-            const uint input = 12;
-
             var result = EndianessConverter.ApplyUint32(ByteOrder.LittleEndian, input);
 
             Assert.AreEqual(input, result);
         }
 
         [TestMethod]
-        public void ApplyUIntWithBigEndianShouldReverseBytes()
+        [DataRow(uint.MinValue)]
+        [DataRow(uint.MaxValue)]
+        [DataRow(0)]
+        public void ApplyUIntWithBigEndianShouldReverseBytes(uint input)
         {
-            const uint input = 12;
-
             var result = EndianessConverter.ApplyUint32(ByteOrder.BigEndian, input);
 
             uint expected = BitConverter.ToUInt32(BitConverter.GetBytes(input).Reverse().ToArray(), 0);
@@ -107,20 +115,22 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        public void ApplyULongWithLittleEndianShouldNoOp()
+        [DataRow(ulong.MinValue)]
+        [DataRow(ulong.MaxValue)]
+        [DataRow(0)]
+        public void ApplyULongWithLittleEndianShouldNoOp(ulong input)
         {
-            const ulong input = 12;
-
             var result = EndianessConverter.ApplyUint64(ByteOrder.LittleEndian, input);
 
             Assert.AreEqual(input, result);
         }
 
         [TestMethod]
-        public void ApplyULongWithBigEndianShouldReverseBytes()
+        [DataRow(ulong.MinValue)]
+        [DataRow(ulong.MaxValue)]
+        [DataRow(0)]
+        public void ApplyULongWithBigEndianShouldReverseBytes(ulong input)
         {
-            const ulong input = 12;
-
             var result = EndianessConverter.ApplyUint64(ByteOrder.BigEndian, input);
             
             ulong expected = BitConverter.ToUInt64(BitConverter.GetBytes(input).Reverse().ToArray(), 0);
@@ -128,20 +138,22 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        public void ApplyLongWithLittleEndianShouldNoOp()
+        [DataRow(long.MinValue)]
+        [DataRow(long.MaxValue)]
+        [DataRow(0)]
+        public void ApplyLongWithLittleEndianShouldNoOp(long input)
         {
-            const long input = 12;
-
             var result = EndianessConverter.ApplyInt64(ByteOrder.LittleEndian, input);
 
             Assert.AreEqual(input, result);
         }
 
         [TestMethod]
-        public void ApplyLongWithBigEndianShouldReverseBytes()
+        [DataRow(long.MinValue)]
+        [DataRow(long.MaxValue)]
+        [DataRow(0)]
+        public void ApplyLongWithBigEndianShouldReverseBytes(long input)
         {
-            const long input = 12;
-
             var result = EndianessConverter.ApplyInt64(ByteOrder.BigEndian, input);
 
             long expected = BitConverter.ToInt64(BitConverter.GetBytes(input).Reverse().ToArray(), 0);
@@ -149,20 +161,22 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        public void ApplyDoubleWithLittleEndianShouldNoOp()
+        [DataRow(double.MinValue)]
+        [DataRow(double.MaxValue)]
+        [DataRow(0)]
+        public void ApplyDoubleWithLittleEndianShouldNoOp(double input)
         {
-            const double input = 12;
-
             var result = EndianessConverter.ApplyDouble(ByteOrder.LittleEndian, input);
 
             Assert.AreEqual(input, result);
         }
 
         [TestMethod]
-        public void ApplyDoubleWithBigEndianShouldReverseBytes()
+        [DataRow(double.MinValue)]
+        [DataRow(double.MaxValue)]
+        [DataRow(0)]
+        public void ApplyDoubleWithBigEndianShouldReverseBytes(double input)
         {
-            const double input = 12;
-
             var result = EndianessConverter.ApplyDouble(ByteOrder.BigEndian, input);
 
             double expected = BitConverter.ToDouble(BitConverter.GetBytes(input).Reverse().ToArray(), 0);
@@ -170,20 +184,22 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        public void ApplyFloatWithLittleEndianShouldNoOp()
+        [DataRow(float.MinValue)]
+        [DataRow(float.MaxValue)]
+        [DataRow(0)]
+        public void ApplyFloatWithLittleEndianShouldNoOp(float input)
         {
-            const float input = 12;
-
             var result = EndianessConverter.ApplyFloat(ByteOrder.LittleEndian, input);
 
             Assert.AreEqual(input, result);
         }
 
         [TestMethod]
-        public void ApplyFloatWithBigEndianShouldReverseBytes()
+        [DataRow(float.MinValue)]
+        [DataRow(float.MaxValue)]
+        [DataRow(0)]
+        public void ApplyFloatWithBigEndianShouldReverseBytes(float input)
         {
-            const float input = 12;
-
             var result = EndianessConverter.ApplyFloat(ByteOrder.BigEndian, input);
 
             float expected = BitConverter.ToSingle(BitConverter.GetBytes(input).Reverse().ToArray(), 0);

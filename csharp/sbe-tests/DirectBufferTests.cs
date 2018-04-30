@@ -33,7 +33,7 @@ namespace Org.SbeTool.Sbe.Tests
             _directBuffer = new DirectBuffer(_buffer);
             var handle = GCHandle.Alloc(_buffer, GCHandleType.Pinned);
 
-            _pBuffer = (byte*)handle.AddrOfPinnedObject().ToPointer();
+            _pBuffer = (byte*) handle.AddrOfPinnedObject().ToPointer();
         }
 
         [TestMethod]
@@ -49,15 +49,17 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        public void ConstructFromNativeBuffer()
+        [DataRow(long.MaxValue)]
+        [DataRow(long.MinValue)]
+        [DataRow(0)]
+        public void ConstructFromNativeBuffer(long value)
         {
             var managedBuffer = new byte[16];
             var handle = GCHandle.Alloc(managedBuffer, GCHandleType.Pinned);
             var unmanagedBuffer = (byte*) handle.AddrOfPinnedObject().ToPointer();
 
-            const int value = 5;
             const int index = 0;
-            
+
             using (var directBufferFromUnmanagedbuffer = new DirectBuffer(unmanagedBuffer, managedBuffer.Length))
             {
                 directBufferFromUnmanagedbuffer.Int64PutLittleEndian(index, value);
@@ -66,48 +68,53 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        public void Recycle()
+        [DataRow(long.MaxValue)]
+        [DataRow(long.MinValue)]
+        [DataRow(0, 3)]
+        public void Recycle(long value)
         {
             var directBuffer = new DirectBuffer();
             var firstBuffer = new byte[16];
             directBuffer.Wrap(firstBuffer);
+            int index = 0;
 
-            directBuffer.Int64PutLittleEndian(0, 1);
-            Assert.AreEqual(1, BitConverter.ToInt64(firstBuffer, 0));
+            directBuffer.Int64PutLittleEndian(index, value);
+            Assert.AreEqual(value, BitConverter.ToInt64(firstBuffer, index));
 
+            index = 1;
             var secondBuffer = new byte[16];
             var secondBufferHandle = GCHandle.Alloc(secondBuffer, GCHandleType.Pinned);
-            var secondUnmanagedBuffer = (byte*)secondBufferHandle.AddrOfPinnedObject().ToPointer();
+            var secondUnmanagedBuffer = (byte*) secondBufferHandle.AddrOfPinnedObject().ToPointer();
             directBuffer.Wrap(secondUnmanagedBuffer, 16);
-            directBuffer.Int64PutLittleEndian(0, 2);
-            Assert.AreEqual(2, BitConverter.ToInt64(secondBuffer, 0));
+            directBuffer.Int64PutLittleEndian(index, value);
+            Assert.AreEqual(value, BitConverter.ToInt64(secondBuffer, index));
 
             directBuffer.Dispose();
         }
 
         [TestMethod]
-        public void Reallocate()
+        public void Reallocate(long value)
         {
             const int initialBufferSize = 8;
             var initialBuffer = new byte[initialBufferSize];
-            
+
             const int biggerBufferSize = 100;
             var biggerBuffer = new byte[biggerBufferSize];
-            
-            var reallocableBuffer = new DirectBuffer(initialBuffer, 
+
+            var reallocableBuffer = new DirectBuffer(initialBuffer,
                 (existingSize, requestedSize) =>
                 {
                     Assert.AreEqual(initialBufferSize, existingSize);
                     Assert.AreEqual(16, requestedSize);
                     return biggerBuffer;
                 });
-            
+
             reallocableBuffer.CheckLimit(8);
             reallocableBuffer.Int64PutLittleEndian(0, 1);
             Assert.AreEqual(initialBufferSize, reallocableBuffer.Capacity);
 
             reallocableBuffer.CheckLimit(16);
-            reallocableBuffer.Int64PutLittleEndian(8, 2);
+            reallocableBuffer.Int64PutLittleEndian(1, 2);
             Assert.AreEqual(biggerBufferSize, reallocableBuffer.Capacity);
 
             Assert.AreEqual(1, BitConverter.ToInt64(biggerBuffer, 0));
@@ -134,8 +141,10 @@ namespace Org.SbeTool.Sbe.Tests
 
         #region Byte
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
+        [TestMethod]
+        [DataRow(byte.MaxValue, 1)]
+        [DataRow(byte.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldPutByte(byte value, int index)
         {
             _directBuffer.CharPut(index, value);
@@ -143,8 +152,10 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(value, _buffer[index]);
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
+        [TestMethod]
+        [DataRow(byte.MaxValue, 1)]
+        [DataRow(byte.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldGetByte(byte value, int index)
         {
             _buffer[index] = value;
@@ -158,9 +169,10 @@ namespace Org.SbeTool.Sbe.Tests
 
         #region Int8
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(sbyte.MaxValue, 1)]
+        [DataRow(sbyte.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldPutInt8(sbyte value, int index)
         {
             _directBuffer.Int8Put(index, value);
@@ -168,9 +180,10 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(value, *(sbyte*) (_pBuffer + index));
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(sbyte.MaxValue, 1)]
+        [DataRow(sbyte.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldGetInt8(sbyte value, int index)
         {
             _buffer[index] = *(byte*) &value;
@@ -184,9 +197,10 @@ namespace Org.SbeTool.Sbe.Tests
 
         #region Int16
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(short.MaxValue, 1)]
+        [DataRow(short.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldPutInt16LittleEndian(short value, int index)
         {
             _directBuffer.Int16PutLittleEndian(index, value);
@@ -194,9 +208,10 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(value, *(short*) (_pBuffer + index));
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(short.MaxValue, 1)]
+        [DataRow(short.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldPutInt16BigEndian(short value, int index)
         {
             _directBuffer.Int16PutBigEndian(index, value);
@@ -205,9 +220,10 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(expected, *(short*) (_pBuffer + index));
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(short.MaxValue, 1)]
+        [DataRow(short.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldGetInt16LittleEndian(short value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -218,9 +234,10 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(value, result);
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(short.MaxValue, 1)]
+        [DataRow(short.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldGetInt16BigEndian(short value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -236,30 +253,33 @@ namespace Org.SbeTool.Sbe.Tests
 
         #region Int32
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(int.MaxValue, 1)]
+        [DataRow(int.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldPutInt32LittleEndian(int value, int index)
         {
             _directBuffer.Int32PutLittleEndian(index, value);
 
-            Assert.AreEqual(value, *(int*)(_pBuffer + index));
+            Assert.AreEqual(value, *(int*) (_pBuffer + index));
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(int.MaxValue, 1)]
+        [DataRow(int.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldPutInt32BigEndian(int value, int index)
         {
             _directBuffer.Int32PutBigEndian(index, value);
 
             int expected = EndianessConverter.ApplyInt32(ByteOrder.BigEndian, value);
-            Assert.AreEqual(expected, *(int*)(_pBuffer + index));
+            Assert.AreEqual(expected, *(int*) (_pBuffer + index));
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(int.MaxValue, 1)]
+        [DataRow(int.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldGetInt32LittleEndian(int value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -270,9 +290,10 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(value, result);
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(int.MaxValue, 1)]
+        [DataRow(int.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldGetInt32BigEndian(int value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -288,30 +309,33 @@ namespace Org.SbeTool.Sbe.Tests
 
         #region Int64
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(long.MaxValue, 1)]
+        [DataRow(long.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldPutInt64LittleEndian(long value, int index)
         {
             _directBuffer.Int64PutLittleEndian(index, value);
 
-            Assert.AreEqual(value, *(long*)(_pBuffer + index));
+            Assert.AreEqual(value, *(long*) (_pBuffer + index));
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(long.MaxValue, 1)]
+        [DataRow(long.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldPutInt64BigEndian(long value, int index)
         {
             _directBuffer.Int64PutBigEndian(index, value);
 
             long expected = EndianessConverter.ApplyInt64(ByteOrder.BigEndian, value);
-            Assert.AreEqual(expected, *(long*)(_pBuffer + index));
+            Assert.AreEqual(expected, *(long*) (_pBuffer + index));
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(long.MaxValue, 1)]
+        [DataRow(long.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldGetInt64LittleEndian(long value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -322,9 +346,10 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(value, result);
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
-        [DataRow(-5, 8)]
+        [TestMethod]
+        [DataRow(long.MaxValue, 1)]
+        [DataRow(long.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldGetInt64BigEndian(long value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -339,8 +364,10 @@ namespace Org.SbeTool.Sbe.Tests
 
         #region UInt8
 
-        [DataRow(5, 0)]
-        [DataRow(5, 8)]
+        [TestMethod]
+        [DataRow(byte.MaxValue, 1)]
+        [DataRow(byte.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldPutUInt8(byte value, int index)
         {
             _directBuffer.Uint8Put(index, value);
@@ -348,10 +375,10 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(value, *(_pBuffer + index));
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 7)]
-        [DataRow(Byte.MinValue, 8)]
-        [DataRow(Byte.MaxValue, 9)]
+        [TestMethod]
+        [DataRow(byte.MaxValue, 1)]
+        [DataRow(byte.MinValue, 2)]
+        [DataRow(0, 3)]
         public void ShouldGetUInt8(byte value, int index)
         {
             _buffer[index] = *&value;
@@ -365,33 +392,30 @@ namespace Org.SbeTool.Sbe.Tests
 
         #region UInt16
 
-        [DataRow(5, 0)]
-        [DataRow(5, 7)]
-        [DataRow(UInt16.MinValue, 8)]
-        [DataRow(UInt16.MaxValue, 9)]
+        [TestMethod]
+        [DataRow(ushort.MaxValue, 1)]
+        [DataRow(ushort.MinValue, 2)]
         public void ShouldPutUInt16LittleEndian(ushort value, int index)
         {
             _directBuffer.Uint16PutLittleEndian(index, value);
 
-            Assert.AreEqual(value, *(ushort*)(_pBuffer + index));
+            Assert.AreEqual(value, *(ushort*) (_pBuffer + index));
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 7)]
-        [DataRow(UInt16.MinValue, 8)]
-        [DataRow(UInt16.MaxValue, 9)]
+        [TestMethod]
+        [DataRow(ushort.MaxValue, 1)]
+        [DataRow(ushort.MinValue, 2)]
         public void ShouldPutUInt16BigEndian(ushort value, int index)
         {
             _directBuffer.Uint16PutBigEndian(index, value);
 
             ushort expected = EndianessConverter.ApplyUint16(ByteOrder.BigEndian, value);
-            Assert.AreEqual(expected, *(ushort*)(_pBuffer + index));
+            Assert.AreEqual(expected, *(ushort*) (_pBuffer + index));
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 7)]
-        [DataRow(UInt16.MinValue, 8)]
-        [DataRow(UInt16.MaxValue, 9)]
+        [TestMethod]
+        [DataRow(ushort.MaxValue, 1)]
+        [DataRow(ushort.MinValue, 2)]
         public void ShouldGetUInt16LittleEndian(ushort value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -402,10 +426,9 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(value, result);
         }
 
-        [DataRow(5, 0)]
-        [DataRow(5, 7)]
-        [DataRow(UInt16.MinValue, 8)]
-        [DataRow(UInt16.MaxValue, 9)]
+        [TestMethod]
+        [DataRow(ushort.MaxValue, 1)]
+        [DataRow(ushort.MinValue, 2)]
         public void ShouldGetUInt16BigEndian(ushort value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -421,10 +444,9 @@ namespace Org.SbeTool.Sbe.Tests
 
         #region UInt32
 
-        [DataRow(0, 0)]
-        [DataRow(5, 7)]
-        [DataRow(UInt32.MinValue, 8)]
-        [DataRow(UInt32.MaxValue, 9)]
+        [TestMethod]
+        [DataRow(uint.MaxValue, 1)]
+        [DataRow(uint.MinValue, 2)]
         public void ShouldPutUInt32LittleEndian(uint value, int index)
         {
             _directBuffer.Uint32PutLittleEndian(index, value);
@@ -432,10 +454,9 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(value, *(uint*) (_pBuffer + index));
         }
 
-        [DataRow(0, 0)]
-        [DataRow(5, 7)]
-        [DataRow(UInt32.MinValue, 8)]
-        [DataRow(UInt32.MaxValue, 9)]
+        [TestMethod]
+        [DataRow(uint.MaxValue, 1)]
+        [DataRow(uint.MinValue, 2)]
         public void ShouldPutUInt32BigEndian(uint value, int index)
         {
             _directBuffer.Uint32PutBigEndian(index, value);
@@ -444,10 +465,9 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(expected, *(uint*) (_pBuffer + index));
         }
 
-        [DataRow(0, 0)]
-        [DataRow(5, 7)]
-        [DataRow(UInt32.MinValue, 8)]
-        [DataRow(UInt32.MaxValue, 9)]
+        [TestMethod]
+        [DataRow(uint.MaxValue, 1)]
+        [DataRow(uint.MinValue, 2)]
         public void ShouldGetUInt32LittleEndian(uint value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -458,10 +478,9 @@ namespace Org.SbeTool.Sbe.Tests
             Assert.AreEqual(value, result);
         }
 
-        [DataRow(0, 0)]
-        [DataRow(5, 7)]
-        [DataRow(UInt32.MinValue, 8)]
-        [DataRow(UInt32.MaxValue, 9)]
+        [TestMethod]
+        [DataRow(uint.MaxValue, 1)]
+        [DataRow(uint.MinValue, 2)]
         public void ShouldGetUInt32BigEndian(uint value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -478,10 +497,8 @@ namespace Org.SbeTool.Sbe.Tests
         #region UInt64
 
         [TestMethod]
-        [DataRow((ulong)0, 0)]
-        [DataRow((ulong)5, 1)]
-        [DataRow(UInt64.MinValue, 8)]
-        [DataRow(UInt64.MaxValue, 9)]
+        [DataRow(ulong.MaxValue, 1)]
+        [DataRow(ulong.MinValue, 2)]
         public void ShouldPutUInt64LittleEndian(ulong value, int index)
         {
             _directBuffer.Uint64PutLittleEndian(index, value);
@@ -490,10 +507,8 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        [DataRow((ulong)0, 0)]
-        [DataRow((ulong)5, 1)]
-        [DataRow(UInt64.MinValue, 8)]
-        [DataRow(UInt64.MaxValue, 9)]
+        [DataRow(ulong.MaxValue, 1)]
+        [DataRow(ulong.MinValue, 2)]
         public void ShouldPutUInt64BigEndian(ulong value, int index)
         {
             _directBuffer.Uint64PutBigEndian(index, value);
@@ -503,10 +518,8 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        [DataRow((ulong)0, 0)]
-        [DataRow((ulong)5, 1)]
-        [DataRow(UInt64.MinValue, 2)]
-        [DataRow(UInt64.MaxValue, 3)]
+        [DataRow(ulong.MaxValue, 1)]
+        [DataRow(ulong.MinValue, 2)]
         public void ShouldGetUInt64LittleEndian(ulong value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -518,10 +531,8 @@ namespace Org.SbeTool.Sbe.Tests
         }
 
         [TestMethod]
-        [DataRow((ulong)0, 0)]
-        [DataRow((ulong)5, 1)]
-        [DataRow(UInt64.MinValue, 2)]
-        [DataRow(UInt64.MaxValue, 3)]
+        [DataRow(ulong.MaxValue, 1)]
+        [DataRow(ulong.MinValue, 2)]
         public void ShouldGetUInt64BigEndian(ulong value, int index)
         {
             var bytes = BitConverter.GetBytes(value);
@@ -539,7 +550,6 @@ namespace Org.SbeTool.Sbe.Tests
 
         [TestMethod]
         [DataRow(0, 0)]
-        [DataRow(5, 1)]
         [DataRow(float.MinValue, 2)]
         [DataRow(float.MaxValue, 3)]
         public void ShouldPutFloatLittleEndian(float value, int index)
@@ -551,7 +561,6 @@ namespace Org.SbeTool.Sbe.Tests
 
         [TestMethod]
         [DataRow(0, 0)]
-        [DataRow(5, 1)]
         [DataRow(float.MinValue, 2)]
         [DataRow(float.MaxValue, 3)]
         public void ShouldPutFloatBigEndian(float value, int index)
@@ -564,7 +573,6 @@ namespace Org.SbeTool.Sbe.Tests
 
         [TestMethod]
         [DataRow(0, 0)]
-        [DataRow(5, 1)]
         [DataRow(float.MinValue, 2)]
         [DataRow(float.MaxValue, 3)]
         public void ShouldGetFloatLittleEndian(float value, int index)
@@ -579,7 +587,6 @@ namespace Org.SbeTool.Sbe.Tests
 
         [TestMethod]
         [DataRow(0, 0)]
-        [DataRow(5, 1)]
         [DataRow(float.MinValue, 2)]
         [DataRow(float.MaxValue, 3)]
         public void ShouldGetFloatBigEndian(float value, int index)
@@ -599,7 +606,6 @@ namespace Org.SbeTool.Sbe.Tests
 
         [TestMethod]
         [DataRow(0, 0)]
-        [DataRow(5, 1)]
         [DataRow(double.MinValue, 2)]
         [DataRow(double.MaxValue, 3)]
         public void ShouldPutDoubleLittleEndian(double value, int index)
@@ -611,7 +617,6 @@ namespace Org.SbeTool.Sbe.Tests
 
         [TestMethod]
         [DataRow(0, 0)]
-        [DataRow(5, 1)]
         [DataRow(double.MinValue, 2)]
         [DataRow(double.MaxValue, 3)]
         public void ShouldPutDoubleBigEndian(double value, int index)
@@ -624,22 +629,20 @@ namespace Org.SbeTool.Sbe.Tests
 
         [TestMethod]
         [DataRow(0, 0)]
-        [DataRow(5, 1)]
         [DataRow(double.MinValue, 2)]
         [DataRow(double.MaxValue, 3)]
-       public void ShouldGetDoubleLittleEndian(double value, int index)
+        public void ShouldGetDoubleLittleEndian(double value, int index)
         {
-           var bytes = BitConverter.GetBytes(value);
-           Array.Copy(bytes, 0, _buffer, index, 8);
+            var bytes = BitConverter.GetBytes(value);
+            Array.Copy(bytes, 0, _buffer, index, 8);
 
-           double result = _directBuffer.DoubleGetLittleEndian(index);
+            double result = _directBuffer.DoubleGetLittleEndian(index);
 
-           Assert.AreEqual(value, result);
-       }
+            Assert.AreEqual(value, result);
+        }
 
         [TestMethod]
         [DataRow(0, 0)]
-        [DataRow(5, 1)]
         [DataRow(double.MinValue, 2)]
         [DataRow(double.MaxValue, 3)]
         public void ShouldGetDoubleBigEndian(double value, int index)
